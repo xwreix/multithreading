@@ -6,30 +6,32 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Scanner;
 
 public class FileReader {
 
-    private static List<List<String>> fileString = new ArrayList();
+    public static void directoryReader() {
+        Thread thread = new FileProcessing();
+        List<List<String>> fileString = new ArrayList();
+        Scanner in = new Scanner(System.in);
+        System.out.println("Enter the path of directory: ");
+        String path = in.nextLine();
+        File directory = new File(path);
+        System.out.println("Enter the path of result file: ");
+        path = in.nextLine();
+        File resultFile = new File(path);
 
-    public static List<List<String>> getFirstHalf() {
-        List<List<String>> FirstHalf = new ArrayList<>();
-        for(int i =0; i<fileString.size()/2; i++){
-            FirstHalf.add(fileString.get(i));
+        try {
+            resultFile.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return FirstHalf;
-    }
 
-    public static List<List<String>> getSecondHalf() {
-        List<List<String>> SecondHalf = new ArrayList<>();
-        for(int i =fileString.size()/2; i<fileString.size(); i++){
-            SecondHalf.add(fileString.get(i));
-        }
-        return SecondHalf;
-    }
+        int counter =0;
 
-    public static void reader() {
-        File directory = new File("C:/Users/RedmiBook/IdeaProjects/multithreading/files");
-        for (File file : directory.listFiles()) {
+        for (File file : Objects.requireNonNull(directory.listFiles())) {
+
             if (file.isFile()) {
                 try {
                     fileString.add(Files.readAllLines(Path.of(file.getPath())));
@@ -37,27 +39,22 @@ public class FileReader {
                     e.printStackTrace();
                 }
             }
-        }
-        startThreads();
-    }
 
-    public static void startThreads() {
-        FirstThread thread1 = new FirstThread();
-        thread1.start();
-        SecondThread thread2 = new SecondThread();
-        thread2.start();
+            List<String> current = fileString.get(counter);
+            thread = new FileProcessing(file.getName(), current.get(0), current.get(1), resultFile.getName());
+            thread.start();
+            counter++;
+        }
 
         try {
-            thread1.join();
-            thread2.join();
+            thread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        Result.writeTotalResult();
+        ResultWriter.addToResult(resultFile.getName(), "total is "+Calculator.getTotalResult());
+        in.close();
     }
-
-
 }
 
 

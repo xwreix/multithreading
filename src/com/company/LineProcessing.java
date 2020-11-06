@@ -13,7 +13,6 @@ public class LineProcessing {
             }
         } catch (NumberFormatException ex) {
             System.out.println("The element wasn't a number");
-            numbers = null;
         }
 
         return numbers;

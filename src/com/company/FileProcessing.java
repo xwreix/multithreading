@@ -21,7 +21,7 @@ public class FileProcessing extends Thread{
     @Override
     public void run() {
         ArrayList<Double> numbers = LineProcessing.lineToNumbers(lineNumbers);
-        String result = Calculator.getData(numbers.get(0), numbers.get(1), operation);
+        String result = Calculator.getData(numbers, operation);
         ResultWriter.addToResult(resultFile,fileName + ": " + result);
     }
 }
